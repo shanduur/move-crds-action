@@ -1,0 +1,57 @@
+name: 'move-crds-action'
+description: |
+  A GitHub Action for moving Custom Resource Definitions (CRDs) between repositories. This
+  action handles copying CRD files from a source location to a target repository and can
+  create or update pull requests to manage these changes.
+author: 'registry-operator authors'
+inputs:
+  targetRepository:
+    description: |
+      The target repository in which to move the CRD files. The format should be
+      "owner/repo" (e.g., "myuser/myrepo").
+    required: true
+  targetChart:
+    description: ''
+    required: true
+  targetChartVersion:
+    description: ''
+    required: true
+  files:
+    description: |
+      A glob pattern to specify the CRD files to be moved. The pattern should match the
+      files to be copied from the source location to the target repository.
+    required: true
+  apiToken:
+    description: |
+      The GitHub API token for authentication and API access. By default, uses the
+      GITHUB_TOKEN secret provided by the GitHub workflow context.
+    required: true
+  title:
+    description: |
+      The title for the pull request when copying CRDs to the target repository. This
+      title will be used for the PR creation or update process.
+    required: false
+    default: 'chore(crds): copied CRDs'
+  commitMessage:
+    description: ''
+    required: false
+    default: 'chore(crds): copied CRDs'
+  author:
+    description: ''
+    required: false
+    default: 'actions'
+runs:
+  using: 'composite'
+  steps:
+  - shell: bash
+    env:
+      GH_TOKEN: ${{ inputs.apiToken }}
+    run: |
+      ./run.sh \
+        '${{ inputs.targetRepository }}' \
+        '${{ inputs.targetChart }}' \
+        '${{ inputs.targetChartVersion }}' \
+        '${{ inputs.files }}' \
+        '${{ inputs.commitMessage }}' \
+        '${{ inputs.title }}' \
+        '${{ inputs.author }}'

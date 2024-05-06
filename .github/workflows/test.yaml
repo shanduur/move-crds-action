@@ -1,0 +1,27 @@
+name: move-crds-action
+
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  move-crds-action:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    - name: 'Move CRDs'
+      uses: ./
+      with:
+        targetRepository: 'shanduur/move-crds-action'
+        targetChart: 'test/chart'
+        targetChartVersion: '1.0.0'
+        apiToken: '${{ secrets.GITHUB_TOKEN }}'
+        files: 'test/static/*'
